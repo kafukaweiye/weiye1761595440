@@ -438,142 +438,88 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         (function() {
             "use strict";
 
+            // ================================================================
+            // ✅ 已配置好你的 Supabase 连接
+            // ================================================================
             const SUPABASE_URL = "https://ongbcduhgujykarailfc.supabase.co";
-            const SUPABASE_ANON_KEY =
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZ2JjZHVoZ2p1eWthcmFpbGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyMDg5MDYsImV4cCI6MjEwMjc4NDkwNn0.Ib_3R2zXBehV3gEobQ62JRnn_10MbrDHw8lnfAtKaC0";
+            const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZ2JjZHVoZ2p1eWthcmFpbGZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyMDg5MDYsImV4cCI6MjEwMjc4NDkwNn0.Ib_3R2zXBehV3gEobQ62JRnn_10MbrDHw8lnfAtKaC0";
+            // ================================================================
 
             const EDIT_PASSWORD = "1761595440";
 
             const DEFAULT_AIRLINES = [
-                { code: "CA", name: "中国国际航空", country: "CN", website: "www.airchina.com", checkin: "www.airchina.com/checkin",
-                    phone: "95583" },
-                { code: "MU", name: "中国东方航空", country: "CN", website: "www.ceair.com", checkin: "www.ceair.com/checkin",
-                    phone: "95530" },
-                { code: "CZ", name: "中国南方航空", country: "CN", website: "www.csair.com", checkin: "www.csair.com/checkin",
-                    phone: "95539" },
-                { code: "HU", name: "海南航空", country: "CN", website: "www.hnair.com", checkin: "www.hnair.com/checkin",
-                    phone: "95339" },
-                { code: "ZH", name: "深圳航空", country: "CN", website: "www.shenzhenair.com", checkin: "www.shenzhenair.com/checkin",
-                    phone: "95361" },
-                { code: "3U", name: "四川航空", country: "CN", website: "www.sichuanair.com", checkin: "www.sichuanair.com/checkin",
-                    phone: "95378" },
-                { code: "MF", name: "厦门航空", country: "CN", website: "www.xiamenair.com", checkin: "www.xiamenair.com/checkin",
-                    phone: "95557" },
-                { code: "SC", name: "山东航空", country: "CN", website: "www.sda.cn", checkin: "www.sda.cn/checkin",
-                    phone: "95369" },
-                { code: "9C", name: "春秋航空", country: "CN", website: "www.ch.com", checkin: "www.ch.com/checkin",
-                    phone: "95524" },
-                { code: "HO", name: "吉祥航空", country: "CN", website: "www.juneyaoair.com", checkin: "www.juneyaoair.com/checkin",
-                    phone: "95520" },
-                { code: "GS", name: "天津航空", country: "CN", website: "www.tianjin-air.com", checkin: "www.tianjin-air.com/checkin",
-                    phone: "95350" },
-                { code: "FM", name: "上海航空", country: "CN", website: "www.shanghai-air.com", checkin: "www.shanghai-air.com/checkin",
-                    phone: "95530" },
-                { code: "EU", name: "成都航空", country: "CN", website: "www.cdal.com.cn", checkin: "www.cdal.com.cn/checkin",
-                    phone: "956028" },
-                { code: "JD", name: "首都航空", country: "CN", website: "www.jdair.net", checkin: "www.jdair.net/checkin",
-                    phone: "95375" },
-                { code: "G5", name: "华夏航空", country: "CN", website: "www.chinaexpressair.com",
-                    checkin: "www.chinaexpressair.com/checkin", phone: "95332" },
-                { code: "GJ", name: "长龙航空", country: "CN", website: "www.loongair.cn", checkin: "www.loongair.cn/checkin",
-                    phone: "956199" },
-                { code: "9H", name: "长安航空", country: "CN", website: "www.airchangan.com", checkin: "www.airchangan.com/checkin",
-                    phone: "95071199" },
-                { code: "TV", name: "西藏航空", country: "CN", website: "www.tibetairlines.com.cn",
-                    checkin: "www.tibetairlines.com.cn/checkin", phone: "956096" },
-                { code: "KN", name: "中国联合航空", country: "CN", website: "www.flycua.com", checkin: "www.flycua.com/checkin",
-                    phone: "95530" },
-                { code: "RY", name: "江西航空", country: "CN", website: "www.airjiangxi.com", checkin: "www.airjiangxi.com/checkin",
-                    phone: "96666" },
-                { code: "NS", name: "河北航空", country: "CN", website: "www.hbhk.com.cn", checkin: "www.hbhk.com.cn/checkin",
-                    phone: "96699" },
-                { code: "8L", name: "祥鹏航空", country: "CN", website: "www.luckyair.net", checkin: "www.luckyair.net/checkin",
-                    phone: "95326" },
-                { code: "Y8", name: "金鹏航空", country: "CN", website: "www.yzr.com.cn", checkin: "www.yzr.com.cn/checkin",
-                    phone: "950719" },
-                { code: "HX", name: "香港航空", country: "HK", website: "www.hkairlines.com", checkin: "www.hkairlines.com/checkin",
-                    phone: "950715" },
-                { code: "EY", name: "阿提哈德航空", country: "AE", website: "www.etihad.com", checkin: "www.etihad.com/checkin",
-                    phone: "400-882-2050" },
-                { code: "CX", name: "国泰航空", country: "HK", website: "www.cathaypacific.com",
-                    checkin: "www.cathaypacific.com/checkin", phone: "400-888-6628" },
-                { code: "NH", name: "全日空", country: "JP", website: "www.ana.co.jp", checkin: "www.ana.co.jp/checkin",
-                    phone: "400-882-8888" },
-                { code: "JL", name: "日本航空", country: "JP", website: "www.jal.com", checkin: "www.jal.com/checkin",
-                    phone: "400-888-0808" },
-                { code: "KE", name: "大韩航空", country: "KR", website: "www.koreanair.com", checkin: "www.koreanair.com/checkin",
-                    phone: "400-658-8888" },
-                { code: "AA", name: "美国航空", country: "US", website: "www.aa.com", checkin: "www.aa.com/checkin",
-                    phone: "400-818-7333" },
-                { code: "GX", name: "北部湾航空", country: "CN", website: "www.gxairlines.com", checkin: "www.gxairlines.com/checkin",
-                    phone: "95370" },
-                { code: "KQ", name: "肯尼亚航空", country: "KE", website: "www.kenya-airways.com",
-                    checkin: "www.kenya-airways.com/checkin", phone: "400-882-3355" },
-                { code: "UO", name: "香港快运", country: "HK", website: "www.hkexpress.com", checkin: "www.hkexpress.com/checkin",
-                    phone: "950715" },
-                { code: "AI", name: "印度航空", country: "IN", website: "www.airindia.in", checkin: "www.airindia.in/checkin",
-                    phone: "400-882-2555" },
-                { code: "NX", name: "澳门航空", country: "MO", website: "www.airmacau.com.mo", checkin: "www.airmacau.com.mo/checkin",
-                    phone: "8396-5555" },
-                { code: "VN", name: "越南航空", country: "VN", website: "www.vietnamairlines.com",
-                    checkin: "www.vietnamairlines.com/checkin", phone: "400-882-8866" },
-                { code: "J2", name: "阿塞拜疆航空", country: "AZ", website: "www.azal.az", checkin: "www.azal.az/checkin",
-                    phone: "400-882-8855" },
-                { code: "RJ", name: "皇家约旦航空", country: "JO", website: "www.rj.com", checkin: "www.rj.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "TR", name: "酷航", country: "SG", website: "www.flyscoot.com", checkin: "www.flyscoot.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "TC", name: "坦桑尼亚航空", country: "TZ", website: "www.airtanzania.co.tz",
-                    checkin: "www.airtanzania.co.tz/checkin", phone: "400-882-8855" },
-                { code: "GF", name: "海湾航空", country: "BH", website: "www.gulfair.com", checkin: "www.gulfair.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "QF", name: "澳洲航空", country: "AU", website: "www.qantas.com", checkin: "www.qantas.com/checkin",
-                    phone: "400-888-0000" },
-                { code: "TG", name: "泰国航空", country: "TH", website: "www.thaiairways.com", checkin: "www.thaiairways.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "DZ", name: "东海航空", country: "CN", website: "www.donghaiair.com", checkin: "www.donghaiair.com/checkin",
-                    phone: "95555" },
-                { code: "DR", name: "瑞丽航空", country: "CN", website: "www.rlair.net", checkin: "www.rlair.net/checkin",
-                    phone: "95331" },
-                { code: "PN", name: "西部航空", country: "CN", website: "www.westair.cn", checkin: "www.westair.cn/checkin",
-                    phone: "95373" },
-                { code: "LH", name: "汉莎航空", country: "DE", website: "www.lufthansa.com", checkin: "www.lufthansa.com/checkin",
-                    phone: "400-886-8868" },
-                { code: "EK", name: "阿联酋航空", country: "AE", website: "www.emirates.com", checkin: "www.emirates.com/checkin",
-                    phone: "400-882-2380" },
-                { code: "ET", name: "埃塞俄比亚航空", country: "ET", website: "www.ethiopianairlines.com",
-                    checkin: "www.ethiopianairlines.com/checkin", phone: "400-882-8855" },
-                { code: "DL", name: "达美航空", country: "US", website: "www.delta.com", checkin: "www.delta.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "F9", name: "边疆航空", country: "US", website: "www.flyfrontier.com", checkin: "www.flyfrontier.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "OD", name: "马印航空", country: "MY", website: "www.malindoair.com", checkin: "www.malindoair.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "SU", name: "俄罗斯航空", country: "RU", website: "www.aeroflot.ru", checkin: "www.aeroflot.ru/checkin",
-                    phone: "400-882-8855" },
-                { code: "AF", name: "法国航空", country: "FR", website: "www.airfrance.com", checkin: "www.airfrance.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "VB", name: "Viva Aerobus", country: "MX", website: "www.vivaaerobus.com",
-                    checkin: "www.vivaaerobus.com/checkin", phone: "400-882-8855" },
-                { code: "UA", name: "美联航", country: "US", website: "www.united.com", checkin: "www.united.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "AK", name: "亚洲航空", country: "MY", website: "www.airasia.com", checkin: "www.airasia.com/checkin",
-                    phone: "400-882-8855" },
-                { code: "FY", name: "飞萤航空", country: "MY", website: "www.fireflyz.com.my", checkin: "www.fireflyz.com.my/checkin",
-                    phone: "400-882-8855" }
+                { code: "CA", name: "中国国际航空", country: "CN", website: "www.airchina.com", checkin: "www.airchina.com/checkin", phone: "95583" },
+                { code: "MU", name: "中国东方航空", country: "CN", website: "www.ceair.com", checkin: "www.ceair.com/checkin", phone: "95530" },
+                { code: "CZ", name: "中国南方航空", country: "CN", website: "www.csair.com", checkin: "www.csair.com/checkin", phone: "95539" },
+                { code: "HU", name: "海南航空", country: "CN", website: "www.hnair.com", checkin: "www.hnair.com/checkin", phone: "95339" },
+                { code: "ZH", name: "深圳航空", country: "CN", website: "www.shenzhenair.com", checkin: "www.shenzhenair.com/checkin", phone: "95361" },
+                { code: "3U", name: "四川航空", country: "CN", website: "www.sichuanair.com", checkin: "www.sichuanair.com/checkin", phone: "95378" },
+                { code: "MF", name: "厦门航空", country: "CN", website: "www.xiamenair.com", checkin: "www.xiamenair.com/checkin", phone: "95557" },
+                { code: "SC", name: "山东航空", country: "CN", website: "www.sda.cn", checkin: "www.sda.cn/checkin", phone: "95369" },
+                { code: "9C", name: "春秋航空", country: "CN", website: "www.ch.com", checkin: "www.ch.com/checkin", phone: "95524" },
+                { code: "HO", name: "吉祥航空", country: "CN", website: "www.juneyaoair.com", checkin: "www.juneyaoair.com/checkin", phone: "95520" },
+                { code: "GS", name: "天津航空", country: "CN", website: "www.tianjin-air.com", checkin: "www.tianjin-air.com/checkin", phone: "95350" },
+                { code: "FM", name: "上海航空", country: "CN", website: "www.shanghai-air.com", checkin: "www.shanghai-air.com/checkin", phone: "95530" },
+                { code: "EU", name: "成都航空", country: "CN", website: "www.cdal.com.cn", checkin: "www.cdal.com.cn/checkin", phone: "956028" },
+                { code: "JD", name: "首都航空", country: "CN", website: "www.jdair.net", checkin: "www.jdair.net/checkin", phone: "95375" },
+                { code: "G5", name: "华夏航空", country: "CN", website: "www.chinaexpressair.com", checkin: "www.chinaexpressair.com/checkin", phone: "95332" },
+                { code: "GJ", name: "长龙航空", country: "CN", website: "www.loongair.cn", checkin: "www.loongair.cn/checkin", phone: "956199" },
+                { code: "9H", name: "长安航空", country: "CN", website: "www.airchangan.com", checkin: "www.airchangan.com/checkin", phone: "95071199" },
+                { code: "TV", name: "西藏航空", country: "CN", website: "www.tibetairlines.com.cn", checkin: "www.tibetairlines.com.cn/checkin", phone: "956096" },
+                { code: "KN", name: "中国联合航空", country: "CN", website: "www.flycua.com", checkin: "www.flycua.com/checkin", phone: "95530" },
+                { code: "RY", name: "江西航空", country: "CN", website: "www.airjiangxi.com", checkin: "www.airjiangxi.com/checkin", phone: "96666" },
+                { code: "NS", name: "河北航空", country: "CN", website: "www.hbhk.com.cn", checkin: "www.hbhk.com.cn/checkin", phone: "96699" },
+                { code: "8L", name: "祥鹏航空", country: "CN", website: "www.luckyair.net", checkin: "www.luckyair.net/checkin", phone: "95326" },
+                { code: "Y8", name: "金鹏航空", country: "CN", website: "www.yzr.com.cn", checkin: "www.yzr.com.cn/checkin", phone: "950719" },
+                { code: "HX", name: "香港航空", country: "HK", website: "www.hkairlines.com", checkin: "www.hkairlines.com/checkin", phone: "950715" },
+                { code: "EY", name: "阿提哈德航空", country: "AE", website: "www.etihad.com", checkin: "www.etihad.com/checkin", phone: "400-882-2050" },
+                { code: "CX", name: "国泰航空", country: "HK", website: "www.cathaypacific.com", checkin: "www.cathaypacific.com/checkin", phone: "400-888-6628" },
+                { code: "NH", name: "全日空", country: "JP", website: "www.ana.co.jp", checkin: "www.ana.co.jp/checkin", phone: "400-882-8888" },
+                { code: "JL", name: "日本航空", country: "JP", website: "www.jal.com", checkin: "www.jal.com/checkin", phone: "400-888-0808" },
+                { code: "KE", name: "大韩航空", country: "KR", website: "www.koreanair.com", checkin: "www.koreanair.com/checkin", phone: "400-658-8888" },
+                { code: "AA", name: "美国航空", country: "US", website: "www.aa.com", checkin: "www.aa.com/checkin", phone: "400-818-7333" },
+                { code: "GX", name: "北部湾航空", country: "CN", website: "www.gxairlines.com", checkin: "www.gxairlines.com/checkin", phone: "95370" },
+                { code: "KQ", name: "肯尼亚航空", country: "KE", website: "www.kenya-airways.com", checkin: "www.kenya-airways.com/checkin", phone: "400-882-3355" },
+                { code: "UO", name: "香港快运", country: "HK", website: "www.hkexpress.com", checkin: "www.hkexpress.com/checkin", phone: "950715" },
+                { code: "AI", name: "印度航空", country: "IN", website: "www.airindia.in", checkin: "www.airindia.in/checkin", phone: "400-882-2555" },
+                { code: "NX", name: "澳门航空", country: "MO", website: "www.airmacau.com.mo", checkin: "www.airmacau.com.mo/checkin", phone: "8396-5555" },
+                { code: "VN", name: "越南航空", country: "VN", website: "www.vietnamairlines.com", checkin: "www.vietnamairlines.com/checkin", phone: "400-882-8866" },
+                { code: "J2", name: "阿塞拜疆航空", country: "AZ", website: "www.azal.az", checkin: "www.azal.az/checkin", phone: "400-882-8855" },
+                { code: "RJ", name: "皇家约旦航空", country: "JO", website: "www.rj.com", checkin: "www.rj.com/checkin", phone: "400-882-8855" },
+                { code: "TR", name: "酷航", country: "SG", website: "www.flyscoot.com", checkin: "www.flyscoot.com/checkin", phone: "400-882-8855" },
+                { code: "TC", name: "坦桑尼亚航空", country: "TZ", website: "www.airtanzania.co.tz", checkin: "www.airtanzania.co.tz/checkin", phone: "400-882-8855" },
+                { code: "GF", name: "海湾航空", country: "BH", website: "www.gulfair.com", checkin: "www.gulfair.com/checkin", phone: "400-882-8855" },
+                { code: "QF", name: "澳洲航空", country: "AU", website: "www.qantas.com", checkin: "www.qantas.com/checkin", phone: "400-888-0000" },
+                { code: "TG", name: "泰国航空", country: "TH", website: "www.thaiairways.com", checkin: "www.thaiairways.com/checkin", phone: "400-882-8855" },
+                { code: "DZ", name: "东海航空", country: "CN", website: "www.donghaiair.com", checkin: "www.donghaiair.com/checkin", phone: "95555" },
+                { code: "DR", name: "瑞丽航空", country: "CN", website: "www.rlair.net", checkin: "www.rlair.net/checkin", phone: "95331" },
+                { code: "PN", name: "西部航空", country: "CN", website: "www.westair.cn", checkin: "www.westair.cn/checkin", phone: "95373" },
+                { code: "LH", name: "汉莎航空", country: "DE", website: "www.lufthansa.com", checkin: "www.lufthansa.com/checkin", phone: "400-886-8868" },
+                { code: "EK", name: "阿联酋航空", country: "AE", website: "www.emirates.com", checkin: "www.emirates.com/checkin", phone: "400-882-2380" },
+                { code: "ET", name: "埃塞俄比亚航空", country: "ET", website: "www.ethiopianairlines.com", checkin: "www.ethiopianairlines.com/checkin", phone: "400-882-8855" },
+                { code: "DL", name: "达美航空", country: "US", website: "www.delta.com", checkin: "www.delta.com/checkin", phone: "400-882-8855" },
+                { code: "F9", name: "边疆航空", country: "US", website: "www.flyfrontier.com", checkin: "www.flyfrontier.com/checkin", phone: "400-882-8855" },
+                { code: "OD", name: "马印航空", country: "MY", website: "www.malindoair.com", checkin: "www.malindoair.com/checkin", phone: "400-882-8855" },
+                { code: "SU", name: "俄罗斯航空", country: "RU", website: "www.aeroflot.ru", checkin: "www.aeroflot.ru/checkin", phone: "400-882-8855" },
+                { code: "AF", name: "法国航空", country: "FR", website: "www.airfrance.com", checkin: "www.airfrance.com/checkin", phone: "400-882-8855" },
+                { code: "VB", name: "Viva Aerobus", country: "MX", website: "www.vivaaerobus.com", checkin: "www.vivaaerobus.com/checkin", phone: "400-882-8855" },
+                { code: "UA", name: "美联航", country: "US", website: "www.united.com", checkin: "www.united.com/checkin", phone: "400-882-8855" },
+                { code: "AK", name: "亚洲航空", country: "MY", website: "www.airasia.com", checkin: "www.airasia.com/checkin", phone: "400-882-8855" },
+                { code: "FY", name: "飞萤航空", country: "MY", website: "www.fireflyz.com.my", checkin: "www.fireflyz.com.my/checkin", phone: "400-882-8855" }
             ];
 
+            // ---------- 状态 ----------
             let airlines = [];
             let isEditMode = false;
             let isSyncing = false;
             let supabaseClient = null;
 
+            // DOM
             const tbody = document.getElementById('tableBody');
             const countDisplay = document.getElementById('countDisplay');
             const passwordInput = document.getElementById('passwordInput');
@@ -589,6 +535,7 @@
             const syncDot = document.getElementById('syncDot');
             const syncText = document.getElementById('syncText');
 
+            // ---------- 初始化 Supabase ----------
             function initSupabase() {
                 try {
                     const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -601,6 +548,7 @@
                 }
             }
 
+            // ---------- 同步状态 ----------
             function setSyncStatus(status, text) {
                 syncDot.className = 'dot';
                 if (status === 'success') {
@@ -618,6 +566,7 @@
                 }
             }
 
+            // ---------- 从云端加载 ----------
             async function loadFromCloud() {
                 if (!supabaseClient) {
                     supabaseClient = initSupabase();
@@ -627,7 +576,7 @@
                 try {
                     setSyncStatus('loading', '加载中...');
                     const { data, error } = await supabaseClient
-                        .from('airlines_data')
+                        .from('airlines')
                         .select('*')
                         .order('id', { ascending: true });
 
@@ -649,6 +598,7 @@
                         setSyncStatus('success', `已加载 ${airlines.length} 条`);
                         return true;
                     } else {
+                        // 云端无数据，初始化默认
                         airlines = DEFAULT_AIRLINES.map(item => ({ ...item }));
                         setSyncStatus('loading', '初始化数据...');
                         await uploadToCloud();
@@ -661,6 +611,7 @@
                 }
             }
 
+            // ---------- 上传到云端 ----------
             async function uploadToCloud() {
                 if (!supabaseClient) {
                     supabaseClient = initSupabase();
@@ -674,8 +625,11 @@
 
                 try {
                     setSyncStatus('loading', '上传中...');
-                    await supabaseClient.from('airlines_data').delete().neq('id', 0);
-
+                    
+                    // 先清空旧数据
+                    await supabaseClient.from('airlines').delete().neq('id', 0);
+                    
+                    // 插入新数据
                     const dataToInsert = airlines.map(item => ({
                         code: item.code || '',
                         name: item.name || '',
@@ -686,7 +640,7 @@
                     }));
 
                     const { error } = await supabaseClient
-                        .from('airlines_data')
+                        .from('airlines')
                         .insert(dataToInsert);
 
                     if (error) {
@@ -704,10 +658,10 @@
                 }
             }
 
+            // ---------- 渲染表格 ----------
             function renderTable() {
                 if (!airlines || airlines.length === 0) {
-                    tbody.innerHTML =
-                        `
+                    tbody.innerHTML = `
                         <tr class="empty-row">
                             <td colspan="6"><i class="fas fa-info-circle" style="margin-right:8px;"></i>暂无航司数据，请解锁后添加</td>
                         </tr>
@@ -735,10 +689,8 @@
                             <td><input type="text" class="editable-field phone" data-field="phone" value="${escapeHtml(phone)}" placeholder="联系方式"></td>
                         </tr>`;
                     } else {
-                        const websiteHref = website ? (website.startsWith('http') ? website : 'https://' + website) :
-                        '#';
-                        const checkinHref = checkin ? (checkin.startsWith('http') ? checkin : 'https://' + checkin) :
-                        '#';
+                        const websiteHref = website ? (website.startsWith('http') ? website : 'https://' + website) : '#';
+                        const checkinHref = checkin ? (checkin.startsWith('http') ? checkin : 'https://' + checkin) : '#';
                         html += `<tr>
                             <td class="code-display">${escapeHtml(code)}</td>
                             <td><strong>${escapeHtml(name)}</strong></td>
@@ -796,8 +748,7 @@
                     const lastRow = rows[rows.length - 1];
                     const nameInput = lastRow.querySelector('input[data-field="name"]');
                     if (nameInput) {
-                        setTimeout(() => { nameInput.focus();
-                            nameInput.select(); }, 50);
+                        setTimeout(() => { nameInput.focus(); nameInput.select(); }, 50);
                     }
                 }
             }
@@ -846,11 +797,13 @@
                 }
             }
 
+            // ---------- 初始化 ----------
             async function init() {
                 supabaseClient = initSupabase();
                 if (supabaseClient) {
                     await loadFromCloud();
                 } else {
+                    // 如果数据库连不上，用默认数据
                     airlines = DEFAULT_AIRLINES.map(item => ({ ...item }));
                     setSyncStatus('error', '离线模式');
                 }
@@ -859,15 +812,14 @@
 
                 unlockBtn.addEventListener('click', tryUnlock);
                 passwordInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') { e.preventDefault();
-                        tryUnlock(); }
+                    if (e.key === 'Enter') { e.preventDefault(); tryUnlock(); }
                 });
                 addBtn.addEventListener('click', addNewAirline);
                 resetBtn.addEventListener('click', function() {
                     if (confirm('重置将恢复默认航司列表，当前修改会丢失。确定吗？')) resetToDefault();
                 });
-                lockBtn.addEventListener('click', function() {
-                    setEditMode(false);
+                lockBtn.addEventListener('click', function() { 
+                    setEditMode(false); 
                 });
                 syncBtn.addEventListener('click', async function() {
                     if (isSyncing) return;
