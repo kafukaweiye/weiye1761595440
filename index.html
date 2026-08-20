@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>航司信息 · 密码保护</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #eef4f9;
+            min-height: 100vh;
+            padding: 2rem 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 1350px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 2rem 2rem 2.2rem;
+            box-shadow: 0 20px 50px rgba(0, 20, 30, 0.12);
+            border: 1px solid #e2ecf4;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #0a2a3b;
+        }
+
+        .header h1 i {
+            color: #1a6b8a;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .stats {
+            background: #e8f0f7;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #1f4a62;
+            white-space: nowrap;
+        }
+
+        .stats i {
+            margin-right: 6px;
+        }
+
+        .mode-badge {
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .mode-badge.view {
+            background: #d4e2ed;
+            color: #1f4a62;
+        }
+
+        .mode-badge.edit {
+            background: #c5e0d4;
+            color: #0f553a;
+        }
+
+        /* 解锁区 */
+        .unlock-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: #f4f8fc;
+            padding: 0.4rem 1rem 0.4rem 1.5rem;
+            border-radius: 60px;
+            border: 1px solid #dce8f0;
+            margin-top: 0.5rem;
+        }
+
+        .unlock-area label {
+            font-size: 0.85rem;
+            color: #1f4a62;
+            font-weight: 500;
+        }
+
+        .unlock-area input {
+            border: 1px solid #cbd8e3;
+            border-radius: 40px;
+            padding: 0.35rem 1rem;
+            font-size: 0.85rem;
+            width: 160px;
+            outline: none;
+            transition: 0.15s;
+            background: white;
+        }
+
+        .unlock-area input:focus {
+            border-color: #1a6b8a;
+            box-shadow: 0 0 0 3px rgba(26, 107, 138, 0.15);
+        }
+
+        .unlock-area .btn-unlock {
+            background: #1a6b8a;
+            border: none;
+            color: white;
+            padding: 0.35rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.15s;
+            white-space: nowrap;
+        }
+
+        .unlock-area .btn-unlock:hover {
+            background: #0f5772;
+        }
+
+        .unlock-status {
+            font-size: 0.8rem;
+            color: #567e99;
+        }
+
+        .unlock-status.error {
+            color: #b13b3b;
+        }
+
+        /* 编辑工具栏 */
+        .edit-toolbar {
+            display: none;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 0.8rem 0 0.2rem 0;
+        }
+
+        .edit-toolbar.show {
+            display: flex;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            border: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-primary {
+            background: #1a6b8a;
+            color: white;
+            box-shadow: 0 4px 12px rgba(26, 107, 138, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: #0f5772;
+            transform: scale(1.02);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #b0c8d8;
+            color: #1f3e4f;
+        }
+
+        .btn-outline:hover {
+            background: #e5eef5;
+        }
+
+        .btn-danger-outline {
+            border-color: #dbb6b6;
+            color: #a04040;
+        }
+
+        .btn-danger-outline:hover {
+            background: #fce8e8;
+        }
+
+        /* 表格 */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid #dce8f0;
+            margin-top: 1rem;
+            background: #fafcfe;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            min-width: 880px;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.9rem 0.8rem 0.7rem 1rem;
+            font-weight: 600;
+            color: #1a4055;
+            background: #f0f6fc;
+            border-bottom: 2px solid #d0dfea;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.5rem 0.8rem 0.5rem 1rem;
+            border-bottom: 1px solid #e8eff5;
+            vertical-align: middle;
+            background: white;
+            color: #1a2f3d;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 可编辑字段 */
+        .editable-field {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 20px;
+            padding: 0.25rem 0.6rem;
+            width: 100%;
+            font-size: 0.88rem;
+            color: #0b2b3d;
+            transition: all 0.12s;
+            min-width: 50px;
+        }
+
+        .editable-field.code {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            max-width: 70px;
+        }
+
+        .editable-field.country {
+            font-weight: 500;
+            text-transform: uppercase;
+            max-width: 70px;
+        }
+
+        .editable-field.website,
+        .editable-field.checkin {
+            font-family: 'Segoe UI', monospace;
+            font-size: 0.82rem;
+        }
+
+        .editable-field.phone {
+            font-weight: 500;
+        }
+
+        /* 只读模式 */
+        .view-mode .editable-field {
+            border-color: transparent !important;
+            background: transparent !important;
+            cursor: default;
+            pointer-events: none;
+            box-shadow: none !important;
+        }
+
+        .view-mode .editable-field:hover {
+            border-color: transparent !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .edit-mode .editable-field:hover {
+            background: white;
+            border-color: #b6d2e5;
+            box-shadow: 0 0 0 3px rgba(26, 107, 138, 0.05);
+        }
+
+        .edit-mode .editable-field:focus {
+            outline: none;
+            background: white;
+            border-color: #1a6b8a;
+            box-shadow: 0 0 0 4px rgba(26, 107, 138, 0.12);
+        }
+
+        .code-display {
+            font-weight: 700;
+            color: #0b425a;
+            letter-spacing: 0.5px;
+        }
+
+        .country-display {
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #2a5a74;
+            font-size: 0.82rem;
+        }
+
+        .link-cell a {
+            color: #1a6b8a;
+            text-decoration: none;
+            border-bottom: 1px dashed #b6d2e5;
+            transition: 0.15s;
+            word-break: break-all;
+        }
+
+        .link-cell a:hover {
+            color: #0e4f68;
+            border-bottom-color: #1a6b8a;
+        }
+
+        .phone-display {
+            font-weight: 500;
+            color: #0b2f40;
+        }
+
+        .empty-row td {
+            padding: 3rem 1rem;
+            text-align: center;
+            color: #8aa9c0;
+            font-style: italic;
+            background: #f8fbfe;
+        }
+
+        .footer-note {
+            margin-top: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #567e99;
+            border-top: 1px solid #e2ecf4;
+            padding-top: 1rem;
+        }
+
+        .footer-note .badge {
+            background: #eef4f9;
+            padding: 0.15rem 1rem;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 1rem 0.6rem;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-right {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            .unlock-area {
+                width: 100%;
+                justify-content: flex-start;
+                padding: 0.5rem 0.8rem;
+            }
+            .unlock-area input {
+                flex: 1;
+                min-width: 100px;
+            }
+            td,
+            th {
+                padding: 0.4rem 0.3rem;
+            }
+            table {
+                font-size: 0.78rem;
+                min-width: 700px;
+            }
+            .editable-field {
+                font-size: 0.78rem;
+                padding: 0.15rem 0.3rem;
+                min-width: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="appContainer">
+        <div class="header">
+            <h1>
+                <i class="fas fa-plane-departure"></i> 航司信息
+            </h1>
+            <div class="header-right">
+                <span class="stats"><i class="far fa-building"></i> <span id="countDisplay">0</span> 家航司</span>
+                <span class="mode-badge view" id="modeBadge"><i class="fas fa-eye"></i> 查看模式</span>
+            </div>
+        </div>
+
+        <!-- 解锁区 -->
+        <div class="unlock-area">
+            <label><i class="fas fa-key"></i> 编辑密码</label>
+            <input type="password" id="passwordInput" placeholder="输入密码解锁编辑" autocomplete="off">
+            <button class="btn-unlock" id="unlockBtn">解锁编辑</button>
+            <span class="unlock-status" id="unlockStatus">🔒 只读</span>
+        </div>
+
+        <!-- 编辑工具栏 (解锁后显示) -->
+        <div class="edit-toolbar" id="editToolbar">
+            <button class="btn btn-primary" id="addRowBtn"><i class="fas fa-plus-circle"></i> 添加航司</button>
+            <button class="btn btn-outline" id="resetDefaultBtn"><i class="fas fa-undo-alt"></i> 重置示例</button>
+            <button class="btn btn-danger-outline" id="lockBtn"><i class="fas fa-lock"></i> 锁定并保存</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:9%;">二字代码</th>
+                        <th style="width:16%;">航司名称</th>
+                        <th style="width:10%;">国家/地区代码</th>
+                        <th style="width:19%;">官网链接</th>
+                        <th style="width:22%;">值机链接</th>
+                        <th style="width:16%;">联系方式</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- 由 JS 动态渲染 -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer-note">
+            <span><i class="fas fa-info-circle"></i> 数据更新于 2026年8月</span>
+            <span class="badge"><i class="fas fa-shield-alt"></i> 输入密码 1761595440 可编辑</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // ================================================================
+            // ★★★★★ 航司数据 (您可以在这里修改) ★★★★★
+            // 格式: { code, name, country, website, checkin, phone }
+            // ================================================================
+            const DEFAULT_AIRLINES = [
+                { code: "CA", name: "中国国际航空", country: "CN", website: "www.airchina.com", checkin: "www.airchina.com/checkin",
+                    phone: "95583" },
+                { code: "MU", name: "中国东方航空", country: "CN", website: "www.ceair.com", checkin: "www.ceair.com/checkin",
+                    phone: "95530" },
+                { code: "CZ", name: "中国南方航空", country: "CN", website: "www.csair.com", checkin: "www.csair.com/checkin",
+                    phone: "95539" },
+                { code: "HU", name: "海南航空", country: "CN", website: "www.hnair.com", checkin: "www.hnair.com/checkin",
+                    phone: "95339" },
+                { code: "ZH", name: "深圳航空", country: "CN", website: "www.shenzhenair.com", checkin: "www.shenzhenair.com/checkin",
+                    phone: "95361" },
+                { code: "3U", name: "四川航空", country: "CN", website: "www.sichuanair.com", checkin: "www.sichuanair.com/checkin",
+                    phone: "95378" },
+                { code: "MF", name: "厦门航空", country: "CN", website: "www.xiamenair.com", checkin: "www.xiamenair.com/checkin",
+                    phone: "95557" },
+                { code: "SC", name: "山东航空", country: "CN", website: "www.sda.cn", checkin: "www.sda.cn/checkin",
+                    phone: "95369" },
+                { code: "9C", name: "春秋航空", country: "CN", website: "www.ch.com", checkin: "www.ch.com/checkin",
+                    phone: "95524" },
+                { code: "HO", name: "吉祥航空", country: "CN", website: "www.juneyaoair.com", checkin: "www.juneyaoair.com/checkin",
+                    phone: "95520" },
+                { code: "GS", name: "天津航空", country: "CN", website: "www.tianjin-air.com", checkin: "www.tianjin-air.com/checkin",
+                    phone: "95350" },
+                { code: "FM", name: "上海航空", country: "CN", website: "www.shanghai-air.com", checkin: "www.shanghai-air.com/checkin",
+                    phone: "95530" },
+                { code: "EU", name: "成都航空", country: "CN", website: "www.cdal.com.cn", checkin: "www.cdal.com.cn/checkin",
+                    phone: "956028" },
+                { code: "JD", name: "首都航空", country: "CN", website: "www.jdair.net", checkin: "www.jdair.net/checkin",
+                    phone: "95375" },
+                { code: "G5", name: "华夏航空", country: "CN", website: "www.chinaexpressair.com",
+                    checkin: "www.chinaexpressair.com/checkin", phone: "95332" },
+                { code: "GJ", name: "长龙航空", country: "CN", website: "www.loongair.cn", checkin: "www.loongair.cn/checkin",
+                    phone: "956199" },
+                { code: "9H", name: "长安航空", country: "CN", website: "www.airchangan.com", checkin: "www.airchangan.com/checkin",
+                    phone: "95071199" },
+                { code: "TV", name: "西藏航空", country: "CN", website: "www.tibetairlines.com.cn",
+                    checkin: "www.tibetairlines.com.cn/checkin", phone: "956096" },
+                { code: "KN", name: "中国联合航空", country: "CN", website: "www.flycua.com", checkin: "www.flycua.com/checkin",
+                    phone: "95530" },
+                { code: "RY", name: "江西航空", country: "CN", website: "www.airjiangxi.com", checkin: "www.airjiangxi.com/checkin",
+                    phone: "96666" },
+                { code: "NS", name: "河北航空", country: "CN", website: "www.hbhk.com.cn", checkin: "www.hbhk.com.cn/checkin",
+                    phone: "96699" },
+                { code: "8L", name: "祥鹏航空", country: "CN", website: "www.luckyair.net", checkin: "www.luckyair.net/checkin",
+                    phone: "95326" },
+                { code: "Y8", name: "金鹏航空", country: "CN", website: "www.yzr.com.cn", checkin: "www.yzr.com.cn/checkin",
+                    phone: "950719" },
+                { code: "HX", name: "香港航空", country: "HK", website: "www.hkairlines.com", checkin: "www.hkairlines.com/checkin",
+                    phone: "950715" },
+                { code: "EY", name: "阿提哈德航空", country: "AE", website: "www.etihad.com", checkin: "www.etihad.com/checkin",
+                    phone: "400-882-2050" },
+                { code: "CX", name: "国泰航空", country: "HK", website: "www.cathaypacific.com",
+                    checkin: "www.cathaypacific.com/checkin", phone: "400-888-6628" },
+                { code: "NH", name: "全日空", country: "JP", website: "www.ana.co.jp", checkin: "www.ana.co.jp/checkin",
+                    phone: "400-882-8888" },
+                { code: "JL", name: "日本航空", country: "JP", website: "www.jal.com", checkin: "www.jal.com/checkin",
+                    phone: "400-888-0808" },
+                { code: "KE", name: "大韩航空", country: "KR", website: "www.koreanair.com", checkin: "www.koreanair.com/checkin",
+                    phone: "400-658-8888" },
+                { code: "AA", name: "美国航空", country: "US", website: "www.aa.com", checkin: "www.aa.com/checkin",
+                    phone: "400-818-7333" },
+                { code: "GX", name: "北部湾航空", country: "CN", website: "www.gxairlines.com", checkin: "www.gxairlines.com/checkin",
+                    phone: "95370" },
+                { code: "KQ", name: "肯尼亚航空", country: "KE", website: "www.kenya-airways.com",
+                    checkin: "www.kenya-airways.com/checkin", phone: "400-882-3355" },
+                { code: "UO", name: "香港快运", country: "HK", website: "www.hkexpress.com", checkin: "www.hkexpress.com/checkin",
+                    phone: "950715" },
+                { code: "AI", name: "印度航空", country: "IN", website: "www.airindia.in", checkin: "www.airindia.in/checkin",
+                    phone: "400-882-2555" },
+                { code: "NX", name: "澳门航空", country: "MO", website: "www.airmacau.com.mo", checkin: "www.airmacau.com.mo/checkin",
+                    phone: "8396-5555" },
+                { code: "VN", name: "越南航空", country: "VN", website: "www.vietnamairlines.com",
+                    checkin: "www.vietnamairlines.com/checkin", phone: "400-882-8866" },
+                { code: "J2", name: "阿塞拜疆航空", country: "AZ", website: "www.azal.az", checkin: "www.azal.az/checkin",
+                    phone: "400-882-8855" },
+                { code: "RJ", name: "皇家约旦航空", country: "JO", website: "www.rj.com", checkin: "www.rj.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "TR", name: "酷航", country: "SG", website: "www.flyscoot.com", checkin: "www.flyscoot.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "TC", name: "坦桑尼亚航空", country: "TZ", website: "www.airtanzania.co.tz",
+                    checkin: "www.airtanzania.co.tz/checkin", phone: "400-882-8855" },
+                { code: "GF", name: "海湾航空", country: "BH", website: "www.gulfair.com", checkin: "www.gulfair.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "QF", name: "澳洲航空", country: "AU", website: "www.qantas.com", checkin: "www.qantas.com/checkin",
+                    phone: "400-888-0000" },
+                { code: "TG", name: "泰国航空", country: "TH", website: "www.thaiairways.com", checkin: "www.thaiairways.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "DZ", name: "东海航空", country: "CN", website: "www.donghaiair.com", checkin: "www.donghaiair.com/checkin",
+                    phone: "95555" },
+                { code: "DR", name: "瑞丽航空", country: "CN", website: "www.rlair.net", checkin: "www.rlair.net/checkin",
+                    phone: "95331" },
+                { code: "PN", name: "西部航空", country: "CN", website: "www.westair.cn", checkin: "www.westair.cn/checkin",
+                    phone: "95373" },
+                { code: "LH", name: "汉莎航空", country: "DE", website: "www.lufthansa.com", checkin: "www.lufthansa.com/checkin",
+                    phone: "400-886-8868" },
+                { code: "EK", name: "阿联酋航空", country: "AE", website: "www.emirates.com", checkin: "www.emirates.com/checkin",
+                    phone: "400-882-2380" },
+                { code: "ET", name: "埃塞俄比亚航空", country: "ET", website: "www.ethiopianairlines.com",
+                    checkin: "www.ethiopianairlines.com/checkin", phone: "400-882-8855" },
+                { code: "DL", name: "达美航空", country: "US", website: "www.delta.com", checkin: "www.delta.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "F9", name: "边疆航空", country: "US", website: "www.flyfrontier.com", checkin: "www.flyfrontier.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "OD", name: "马印航空", country: "MY", website: "www.malindoair.com", checkin: "www.malindoair.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "SU", name: "俄罗斯航空", country: "RU", website: "www.aeroflot.ru", checkin: "www.aeroflot.ru/checkin",
+                    phone: "400-882-8855" },
+                { code: "AF", name: "法国航空", country: "FR", website: "www.airfrance.com", checkin: "www.airfrance.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "VB", name: "Viva Aerobus", country: "MX", website: "www.vivaaerobus.com",
+                    checkin: "www.vivaaerobus.com/checkin", phone: "400-882-8855" },
+                { code: "UA", name: "美联航", country: "US", website: "www.united.com", checkin: "www.united.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "AK", name: "亚洲航空", country: "MY", website: "www.airasia.com", checkin: "www.airasia.com/checkin",
+                    phone: "400-882-8855" },
+                { code: "FY", name: "飞萤航空", country: "MY", website: "www.fireflyz.com.my", checkin: "www.fireflyz.com.my/checkin",
+                    phone: "400-882-8855" }
+            ];
+            // ================================================================
+
+            const EDIT_PASSWORD = "1761595440";
+
+            let airlines = [];
+            let isEditMode = false;
+
+            const tbody = document.getElementById('tableBody');
+            const countDisplay = document.getElementById('countDisplay');
+            const passwordInput = document.getElementById('passwordInput');
+            const unlockBtn = document.getElementById('unlockBtn');
+            const unlockStatus = document.getElementById('unlockStatus');
+            const modeBadge = document.getElementById('modeBadge');
+            const editToolbar = document.getElementById('editToolbar');
+            const addBtn = document.getElementById('addRowBtn');
+            const resetBtn = document.getElementById('resetDefaultBtn');
+            const lockBtn = document.getElementById('lockBtn');
+            const container = document.getElementById('appContainer');
+
+            // ---------- 存储 ----------
+            function loadFromStorage() {
+                const stored = localStorage.getItem('airlineDataProtected');
+                if (stored) {
+                    try {
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed) && parsed.length) {
+                            airlines = parsed;
+                            return true;
+                        }
+                    } catch (e) {}
+                }
+                return false;
+            }
+
+            function saveToStorage() {
+                localStorage.setItem('airlineDataProtected', JSON.stringify(airlines));
+                updateCounter();
+            }
+
+            function updateCounter() {
+                countDisplay.textContent = airlines.length;
+            }
+
+            // ---------- 渲染 ----------
+            function renderTable() {
+                if (!airlines || airlines.length === 0) {
+                    tbody.innerHTML = `
+                        <tr class="empty-row">
+                            <td colspan="6">
+                                <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+                                暂无航司数据，请解锁后添加
+                            </td>
+                        </tr>
+                    `;
+                    updateCounter();
+                    return;
+                }
+
+                let html = '';
+                airlines.forEach((item, index) => {
+                    const code = item.code || '';
+                    const name = item.name || '';
+                    const country = item.country || '';
+                    const website = item.website || '';
+                    const checkin = item.checkin || '';
+                    const phone = item.phone || '';
+
+                    if (isEditMode) {
+                        html += `
+                            <tr data-index="${index}">
+                                <td><input type="text" class="editable-field code" data-field="code" value="${escapeHtml(code)}" placeholder="CA" maxlength="6"></td>
+                                <td><input type="text" class="editable-field" data-field="name" value="${escapeHtml(name)}" placeholder="航司名称"></td>
+                                <td><input type="text" class="editable-field country" data-field="country" value="${escapeHtml(country)}" placeholder="CN" maxlength="6"></td>
+                                <td><input type="text" class="editable-field website" data-field="website" value="${escapeHtml(website)}" placeholder="官网链接"></td>
+                                <td><input type="text" class="editable-field checkin" data-field="checkin" value="${escapeHtml(checkin)}" placeholder="值机链接"></td>
+                                <td><input type="text" class="editable-field phone" data-field="phone" value="${escapeHtml(phone)}" placeholder="联系方式"></td>
+                            </tr>
+                        `;
+                    } else {
+                        const websiteHref = website ? (website.startsWith('http') ? website : 'https://' + website) :
+                        '#';
+                        const checkinHref = checkin ? (checkin.startsWith('http') ? checkin : 'https://' + checkin) :
+                        '#';
+
+                        html += `
+                            <tr>
+                                <td class="code-display">${escapeHtml(code)}</td>
+                                <td><strong>${escapeHtml(name)}</strong></td>
+                                <td class="country-display">${escapeHtml(country)}</td>
+                                <td class="link-cell">${website ? `<a href="${escapeHtml(websiteHref)}" target="_blank" rel="noopener">${escapeHtml(website)}</a>` : '-'}</td>
+                                <td class="link-cell">${checkin ? `<a href="${escapeHtml(checkinHref)}" target="_blank" rel="noopener">${escapeHtml(checkin)}</a>` : '-'}</td>
+                                <td class="phone-display">${escapeHtml(phone)}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                tbody.innerHTML = html;
+                updateCounter();
+
+                if (isEditMode) {
+                    tbody.querySelectorAll('.editable-field').forEach(input => {
+                        input.addEventListener('input', function() {
+                            const row = this.closest('tr');
+                            if (!row) return;
+                            const idx = parseInt(row.dataset.index, 10);
+                            if (isNaN(idx) || idx < 0 || idx >= airlines.length) return;
+                            const field = this.dataset.field;
+                            if (field) {
+                                airlines[idx][field] = this.value;
+                                saveToStorage();
+                            }
+                        });
+                        input.addEventListener('focus', function() { this.select(); });
+                    });
+                }
+
+                container.classList.toggle('view-mode', !isEditMode);
+                container.classList.toggle('edit-mode', isEditMode);
+            }
+
+            // ---------- 工具 ----------
+            function escapeHtml(text) {
+                if (!text) return '';
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+                return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+            }
+
+            // ---------- 重置 ----------
+            function resetToDefault() {
+                airlines = DEFAULT_AIRLINES.map(item => ({ ...item }));
+                saveToStorage();
+                renderTable();
+            }
+
+            // ---------- 添加 ----------
+            function addNewAirline() {
+                if (!isEditMode) return;
+                airlines.push({ code: '', name: '新航司', country: '', website: '', checkin: '', phone: '' });
+                saveToStorage();
+                renderTable();
+                const rows = tbody.querySelectorAll('tr');
+                if (rows.length) {
+                    const lastRow = rows[rows.length - 1];
+                    const nameInput = lastRow.querySelector('input[data-field="name"]');
+                    if (nameInput) {
+                        setTimeout(() => { nameInput.focus();
+                            nameInput.select(); }, 50);
+                    }
+                }
+            }
+
+            // ---------- 切换模式 ----------
+            function setEditMode(enabled) {
+                isEditMode = enabled;
+                if (enabled) {
+                    modeBadge.className = 'mode-badge edit';
+                    modeBadge.innerHTML = '<i class="fas fa-pen"></i> 编辑模式';
+                    unlockStatus.textContent = '🔓 可编辑';
+                    unlockStatus.className = 'unlock-status';
+                    unlockBtn.textContent = '锁定';
+                    editToolbar.className = 'edit-toolbar show';
+                    passwordInput.value = '';
+                    passwordInput.placeholder = '已解锁';
+                } else {
+                    modeBadge.className = 'mode-badge view';
+                    modeBadge.innerHTML = '<i class="fas fa-eye"></i> 查看模式';
+                    unlockStatus.textContent = '🔒 只读';
+                    unlockStatus.className = 'unlock-status';
+                    unlockBtn.textContent = '解锁编辑';
+                    editToolbar.className = 'edit-toolbar';
+                    passwordInput.value = '';
+                    passwordInput.placeholder = '输入密码解锁编辑';
+                }
+                renderTable();
+            }
+
+            // ---------- 解锁 ----------
+            function tryUnlock() {
+                const input = passwordInput.value.trim();
+                if (isEditMode) {
+                    setEditMode(false);
+                    saveToStorage();
+                    return;
+                }
+
+                if (input === EDIT_PASSWORD) {
+                    setEditMode(true);
+                    renderTable();
+                    passwordInput.value = '';
+                } else {
+                    unlockStatus.textContent = '❌ 密码错误';
+                    unlockStatus.className = 'unlock-status error';
+                    passwordInput.value = '';
+                    setTimeout(() => {
+                        unlockStatus.textContent = '🔒 只读';
+                        unlockStatus.className = 'unlock-status';
+                    }, 1500);
+                }
+            }
+
+            // ---------- 初始化 ----------
+            function init() {
+                const hasStorage = loadFromStorage();
+                if (!hasStorage) resetToDefault();
+                else renderTable();
+                setEditMode(false);
+
+                unlockBtn.addEventListener('click', tryUnlock);
+                passwordInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') { e.preventDefault();
+                        tryUnlock(); }
+                });
+                addBtn.addEventListener('click', addNewAirline);
+                resetBtn.addEventListener('click', function() {
+                    if (confirm('重置将恢复默认航司列表，当前修改会丢失。确定吗？')) resetToDefault();
+                });
+                lockBtn.addEventListener('click', function() { setEditMode(false);
+                    saveToStorage(); });
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
